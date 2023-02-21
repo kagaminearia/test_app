@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -63,17 +64,48 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         setMonthView();
     }
 
+    // click on certain dates with corresponding display
     @Override
-    public void onItemClick(int position, String dayText)
+    public void onItemClick(int position, LocalDate date)
     {
-        if(!dayText.equals(""))
-        {
-            String message = "Selected Date " + dayText + " " + monthYearFromDate(CalendarUtils.selectedDate);
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        if (date != null) {
+            CalendarUtils.selectedDate = date;
+            setMonthView();
         }
+
     }
 
     public void weeklyAction(View view) {
         startActivity(new Intent(this,WeekViewActivity.class));
     }
+
+
+    public void monthlyAction(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save selected date in SharedPreferences
+        SharedPreferences.Editor editor = getSharedPreferences("MY_PREFS", MODE_PRIVATE).edit();
+        editor.putLong("SELECTED_DATE", CalendarUtils.selectedDate.toEpochDay());
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Retrieve selected date from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("MY_PREFS", MODE_PRIVATE);
+        long selectedDateEpochDay = prefs.getLong("SELECTED_DATE", LocalDate.now().toEpochDay());
+        CalendarUtils.selectedDate = LocalDate.ofEpochDay(selectedDateEpochDay);
+
+        setMonthView();
+    }
+
 }

@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 public class WeekViewActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener{
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +57,27 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
         setWeekView();
     }
 
+    // click on certain dates with corresponding display
     @Override
-    public void onItemClick(int position, String dayText)
+    public void onItemClick(int position, LocalDate date)
     {
 
-        String message = "Selected Date " + dayText + " " + monthYearFromDate(CalendarUtils.selectedDate);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        CalendarUtils.selectedDate = date;
+        setWeekView();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    public void monthlyAction(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+
 }
