@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,11 +25,14 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
 
+    private static final String TAG = "MainActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "MainActivity::onCreate() called");
         setContentView(R.layout.activity_main);
         initWidgets();
         CalendarUtils.selectedDate = LocalDate.now();
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "MainActivity::onPause() called");
 
         // Save selected date in SharedPreferences
         SharedPreferences.Editor editor = getSharedPreferences("MY_PREFS", MODE_PRIVATE).edit();
@@ -99,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "MainActivity::onResume() called");
 
         // Retrieve selected date from SharedPreferences
         SharedPreferences prefs = getSharedPreferences("MY_PREFS", MODE_PRIVATE);
