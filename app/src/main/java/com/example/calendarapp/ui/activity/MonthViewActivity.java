@@ -96,6 +96,8 @@ public class MonthViewActivity extends AppCompatActivity implements CalendarAdap
     }
 
 
+    public void eventAction(View view){ startActivity(new Intent(this,EventViewActivity.class));}
+
     public void monthlyAction(View view) {
         Intent intent = new Intent(this, MonthViewActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
