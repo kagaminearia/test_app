@@ -11,15 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
+public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
 {
     private final ArrayList<LocalDate> days;
-    private final OnItemListener onItemListener;
+//    private final OnItemListener onItemListener;
 
-    public CalendarAdapter(ArrayList<LocalDate> days, OnItemListener onItemListener)
+    public CalendarAdapter(ArrayList<LocalDate> days)
     {
         this.days = days;
-        this.onItemListener = onItemListener;
     }
 
     @NonNull
@@ -35,7 +34,7 @@ class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
             layoutParams.height = (int) (parent.getHeight());
         }
 
-        return new CalendarViewHolder(view, onItemListener,days);
+        return new CalendarViewHolder(view,days);
     }
 
     @Override
