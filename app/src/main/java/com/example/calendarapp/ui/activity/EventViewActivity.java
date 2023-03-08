@@ -11,8 +11,7 @@ import com.example.calendarapp.R;
 import java.time.LocalDate;
 
 public class EventViewActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener{
-    private TextView titleText;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
