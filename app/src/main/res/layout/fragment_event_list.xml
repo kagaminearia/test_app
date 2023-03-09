@@ -8,7 +8,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Your event row layout -->
         <include layout="@layout/event_row"/>
 
         <androidx.recyclerview.widget.RecyclerView
