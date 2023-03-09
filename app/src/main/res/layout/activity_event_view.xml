@@ -31,15 +31,7 @@
     </LinearLayout>
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="30dp"
-        android:text="Add Event"
-        android:textColor="@color/blue_0"
-        android:textAlignment="center"
-        android:textSize="40dp"></TextView>
+
 
 
     <LinearLayout
@@ -52,19 +44,13 @@
         android:layout_marginRight="40dp">
 
 
-        <EditText
-            android:id="@+id/eventEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter event name"
-            android:textSize="20dp"
-            android:inputType="text" />
+
 
         <Button
-            android:id="@+id/submitButton"
+            android:id="@+id/addEventButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:text="Add New Events" />
     </LinearLayout>
 
 

@@ -50,9 +50,9 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(date.getTime());
+        dest.writeLong(date != null ? date.getTime() : 0L);
         dest.writeString(name);
-        dest.writeLong(startTime.getTime());
+        dest.writeLong(startTime != null ? startTime.getTime() : 0L);
         if (type == null) {
             dest.writeByte((byte) 0);
         } else {

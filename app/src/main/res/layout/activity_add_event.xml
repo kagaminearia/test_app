@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.AddEventActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="50dp"
+            android:text="Add New Event"
+            android:textColor="@color/blue_0"
+            android:textAlignment="center"
+            android:textSize="40dp"></TextView>
+
+
+        <LinearLayout
+            android:id="@+id/eventLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="330dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp">
+
+
+            <EditText
+                android:id="@+id/eventEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter event name"
+                android:textSize="20dp"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit" />
+        </LinearLayout>
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor="@color/blue_0"
+        android:textSize="20dp"
+        android:text="Back to the Events" />
+
+    </LinearLayout>
