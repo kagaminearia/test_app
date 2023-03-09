@@ -5,11 +5,70 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.MonthViewActivity">
+    tools:context=".ui.activity.EventViewActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/blue_1"
+            android:layout_marginBottom="10dp"
+            android:text="Events"
+            android:textAlignment="center"
+            android:textSize="50dp"></TextView>
+
+        <FrameLayout
+            android:id="@+id/event_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="test"
-        android:textSize="50dp"></TextView>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="Add Event"
+        android:textColor="@color/blue_0"
+        android:textAlignment="center"
+        android:textSize="40dp"></TextView>
+
+
+    <LinearLayout
+        android:id="@+id/eventLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp">
+
+
+        <EditText
+            android:id="@+id/eventEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter event name"
+            android:textSize="20dp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+    </LinearLayout>
+
+
+
+
 
 </LinearLayout>
