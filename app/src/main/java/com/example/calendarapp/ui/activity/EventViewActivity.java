@@ -2,6 +2,7 @@ package com.example.calendarapp.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -56,7 +57,8 @@ public class EventViewActivity extends AppCompatActivity implements CalendarAdap
                 // Create a new instance of EventListFragment and add it to the event_fragment_container
                 EventListFragment fragment = new EventListFragment();
                 fragment.setArguments(bundle);
-                getSupportFragmentManager().beginTransaction().add(R.id.event_fragment_container, fragment).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.event_fragment_container, fragment).commitAllowingStateLoss();
+
             }
 
             @Override
@@ -69,35 +71,23 @@ public class EventViewActivity extends AppCompatActivity implements CalendarAdap
 
     private void initWidgets() {
         // Retrieve the views from the layout
-        LinearLayout eventLayout = findViewById(R.id.eventLayout);
-        EditText eventEditText = findViewById(R.id.eventEditText);
-        Button submitButton = findViewById(R.id.submitButton);
-        //Button showButton = findViewById(R.id.showButton);
 
-        // Set an event listener on the Submit button
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        Button addEventButton = findViewById(R.id.addEventButton);
+        addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Retrieve the user input
-                String eventName = eventEditText.getText().toString();
-
-                // Create new event
-                Event newEvent = new Event(eventName);
-
-                // Save the event to the db with unique key (for current usage, may changed later)
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("events").push();
-                ref.setValue(newEvent);
-
-                // Clear the EditText view
-                eventEditText.setText("");
-
-                // Notify the user that the event was saved
-                Toast.makeText(EventViewActivity.this, "Event saved", Toast.LENGTH_SHORT).show();
+                onAddEventClicked();
             }
         });
 
 
 
+    }
+
+    private void onAddEventClicked() {
+        // Launch the AddEventActivity
+        Intent intent = new Intent(this, AddEventActivity.class);
+        startActivity(intent);
     }
 
 
