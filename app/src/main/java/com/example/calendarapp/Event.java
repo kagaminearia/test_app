@@ -11,6 +11,7 @@ public class Event implements Parcelable {
     public Date startTime;
     public Integer type;
     public String info;
+    public String id;
 
     public Event() {
     }
@@ -29,6 +30,7 @@ public class Event implements Parcelable {
             type = in.readInt();
         }
         info = in.readString();
+        id = in.readString();
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -60,5 +62,6 @@ public class Event implements Parcelable {
             dest.writeInt(type);
         }
         dest.writeString(info);
+        dest.writeString(id);
     }
 }
