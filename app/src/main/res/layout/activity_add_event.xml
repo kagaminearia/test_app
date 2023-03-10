@@ -43,6 +43,15 @@
         </LinearLayout>
 
     <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor="@color/red"
+        android:textSize="20dp"
+        android:text="Delete Event" />
+
+    <Button
         android:id="@+id/backButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

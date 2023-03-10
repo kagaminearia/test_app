@@ -47,6 +47,7 @@ public class EventViewActivity extends AppCompatActivity implements CalendarAdap
                 ArrayList<Event> events = new ArrayList<>();
                 for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
                     Event event = eventSnapshot.getValue(Event.class);
+                    event.id = eventSnapshot.getKey();
                     events.add(event);
                 }
 
