@@ -34,7 +34,8 @@ public class AddEventActivity extends AppCompatActivity {
     }
 
     private void initWidgets(){
-        EditText eventEditText = findViewById(R.id.eventEditText);
+        EditText nameEditText = findViewById(R.id.nameEditText);
+        EditText infoEditText = findViewById(R.id.infoEditText);
         Button submitButton = findViewById(R.id.submitButton);
         Button backButton = findViewById(R.id.backButton);
         Button deleteButton = findViewById(R.id.deleteButton);
@@ -49,7 +50,8 @@ public class AddEventActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     if (task.isSuccessful()) {
                         event = task.getResult().getValue(Event.class);
-                        eventEditText.setText(event.name);
+                        nameEditText.setText(event.name);
+                        infoEditText.setText(event.info);
                     } else {
                         Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
                     }
@@ -64,9 +66,11 @@ public class AddEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Retrieve the user input
-                String eventName = eventEditText.getText().toString();
-                // Set the event name (add other fields later)
+                String eventName = nameEditText.getText().toString();
+                String eventInfo = infoEditText.getText().toString();
+                // Set the event fields (add other fields later)
                 event.name = eventName;
+                event.info = eventInfo;
 
                 // Update the event if we know the id
                 if (eventId != null) {
@@ -76,8 +80,9 @@ public class AddEventActivity extends AppCompatActivity {
                     ref.push().setValue(event);
                 }
 
-                // Clear the EditText view
-                eventEditText.setText("");
+                // Clear the EditText views
+                nameEditText.setText("");
+                infoEditText.setText("");
 
                 // Notify the user that the event was saved
                 backButton.performClick();
