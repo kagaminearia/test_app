@@ -16,7 +16,6 @@
             android:textAlignment="center"
             android:textSize="40dp"></TextView>
 
-
     <LinearLayout
         android:id="@+id/eventLayout"
         android:layout_width="match_parent"

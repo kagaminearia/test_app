@@ -64,5 +64,6 @@ public class Event implements Parcelable {
         dest.writeString(info);
         dest.writeString(id);
     }
+
 }
 

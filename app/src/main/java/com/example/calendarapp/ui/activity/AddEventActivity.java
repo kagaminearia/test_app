@@ -43,19 +43,24 @@ public class AddEventActivity extends AppCompatActivity {
         initWidgets();
     }
 
+
     private void initWidgets() {
         EditText nameEditText = findViewById(R.id.nameEditText);
+        dateEditText = findViewById(R.id.dateEditText);
         EditText infoEditText = findViewById(R.id.infoEditText);
-        dateEditText = findViewById(R.id.dateEditText); // new field
         Button submitButton = findViewById(R.id.submitButton);
         Button backButton = findViewById(R.id.backButton);
         Button deleteButton = findViewById(R.id.deleteButton);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("events");
 
         dateButton = findViewById(R.id.dateButton);
-        dateButton.setOnClickListener(v -> showDatePickerDialog());
+        dateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
 
-        // Modify the view if we're editing an event
         if (eventId != null) {
             Log.d(TAG, "Event id is " + eventId);
             // Retrieve the event from Firebase
@@ -63,16 +68,10 @@ public class AddEventActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     if (task.isSuccessful()) {
-                        Event event = task.getResult().getValue(Event.class);
-                        if (event.eventDate == null) {
-                            // Set a default value for the date
-                            event.eventDate = new Date();
-                        }
+                        event = task.getResult().getValue(Event.class);
                         nameEditText.setText(event.name);
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        String formattedDate = dateFormat.format(event.eventDate);
-                        dateEditText.setText(formattedDate);
                         infoEditText.setText(event.info);
+                        dateEditText.setText(event.eventDate.toString()); // set date field
                     } else {
                         Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
                     }
@@ -153,10 +152,11 @@ public class AddEventActivity extends AppCompatActivity {
         // Create a new instance of DatePickerDialog and show it
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                (view, year, monthOfYear, dayOfMonth) -> {
-                    // Set the selected date to the dateEditText
-                    String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
-                    if (dateEditText != null) {
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // Set the selected date to the dateEditText
+                        String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                         dateEditText.setText(date);
                     }
                 },
