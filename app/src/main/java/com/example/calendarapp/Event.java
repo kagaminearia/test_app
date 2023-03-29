@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public class Event implements Parcelable {
-    public Date date;
+    public Date eventDate;
     public String name;
     public Date startTime;
     public Integer type;
@@ -21,7 +21,7 @@ public class Event implements Parcelable {
     }
 
     protected Event(Parcel in) {
-        date = new Date(in.readLong());
+        eventDate = new Date(in.readLong());
         name = in.readString();
         startTime = new Date(in.readLong());
         if (in.readByte() == 0) {
@@ -52,7 +52,7 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(date != null ? date.getTime() : 0L);
+        dest.writeLong(eventDate != null ? eventDate.getTime() : 0L);
         dest.writeString(name);
         dest.writeLong(startTime != null ? startTime.getTime() : 0L);
         if (type == null) {
@@ -65,3 +65,4 @@ public class Event implements Parcelable {
         dest.writeString(id);
     }
 }
+

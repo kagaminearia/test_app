@@ -17,38 +17,55 @@
             android:textSize="40dp"></TextView>
 
 
-        <LinearLayout
-            android:id="@+id/eventLayout"
+    <LinearLayout
+        android:id="@+id/eventLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="330dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp">
+
+        <EditText
+            android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="330dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp">
-
-
+            android:hint="Enter event name"
+            android:textSize="20dp"
+            android:inputType="text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <EditText
-                android:id="@+id/nameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter event name"
-                android:textSize="20dp"
-                android:inputType="text" />
-
-            <EditText
-                android:id="@+id/infoEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter information"
-                android:textSize="20dp"
-                android:inputType="text" />
-
+            android:id="@+id/dateEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter date (yyyy-MM-dd)"
+            android:textSize="20dp"
+            android:inputType="date" />
             <Button
-                android:id="@+id/submitButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Submit" />
+                android:id="@+id/dateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Select" />
         </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/infoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter information"
+            android:textSize="20dp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/deleteButton"
