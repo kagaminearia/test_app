@@ -68,10 +68,17 @@ public class AddEventActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     if (task.isSuccessful()) {
-                        event = task.getResult().getValue(Event.class);
+                        Event event = task.getResult().getValue(Event.class);
+                        if (event.eventDate == null) {
+                            // Set a default value for the date
+                            event.eventDate = new Date();
+                        }
+                        // Set the EditText views
                         nameEditText.setText(event.name);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                        String formattedDate = dateFormat.format(event.eventDate);
+                        dateEditText.setText(formattedDate);
                         infoEditText.setText(event.info);
-                        dateEditText.setText(event.eventDate.toString()); // set date field
                     } else {
                         Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
                     }
