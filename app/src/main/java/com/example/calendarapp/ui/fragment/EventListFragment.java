@@ -1,5 +1,6 @@
 package com.example.calendarapp.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import com.example.calendarapp.Event;
 import com.example.calendarapp.R;
-import com.example.calendarapp.ui.activity.EventViewActivity;
+import com.example.calendarapp.ui.activity.AddEventActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,13 +84,8 @@ public class EventListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.eventName.setText(events.get(position).name);
-            Date date = events.get(position).date;
-            if (date != null) {
-                holder.eventDate.setText(date.toString());
-            } else {
-                holder.eventDate.setText("No date available");
-            }
+            Event event = events.get(position);
+            holder.bind(event);
         }
 
         @Override
@@ -97,14 +93,34 @@ public class EventListFragment extends Fragment {
             return events.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView eventName;
-            TextView eventDate;
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            private TextView eventNameTextView;
+            private TextView eventDateTextView;
+            private Event event;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                eventName = itemView.findViewById(R.id.eventName);
-                eventDate = itemView.findViewById(R.id.eventDate);
+                itemView.setOnClickListener(this);
+                eventNameTextView = itemView.findViewById(R.id.eventName);
+                eventDateTextView = itemView.findViewById(R.id.eventDate);
+            }
+
+            public void bind(Event e) {
+                event = e;
+                eventNameTextView.setText(event.name);
+                if (event.date != null) {
+                    eventDateTextView.setText(event.date.toString());
+                } else {
+                    eventDateTextView.setText("No date available");
+                }
+            }
+
+            @Override
+            public void onClick(View view) {
+                // Start the Add Event activity
+                Intent intent = new Intent(getActivity(), AddEventActivity.class);
+                intent.putExtra("event_id", event.id);
+                startActivity(intent);
             }
         }
     }
