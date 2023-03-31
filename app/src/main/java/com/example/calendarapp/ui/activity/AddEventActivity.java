@@ -163,7 +163,7 @@ public class AddEventActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Set the selected date to the dateEditText
-                        String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+                        String date = String.format("%d/%02d/%02d", year, monthOfYear + 1, dayOfMonth);
                         dateEditText.setText(date);
                     }
                 },
