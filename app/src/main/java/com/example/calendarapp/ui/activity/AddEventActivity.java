@@ -98,7 +98,7 @@ public class AddEventActivity extends AppCompatActivity {
                 String eventDateStr = dateEditText.getText().toString(); // retrieve date input
                 Date eventDate = null;
                 try {
-                    eventDate = new SimpleDateFormat("yyyy-MM-dd").parse(eventDateStr);
+                    eventDate = new SimpleDateFormat("yyyy/MM/dd").parse(eventDateStr);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
