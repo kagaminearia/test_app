@@ -12,6 +12,7 @@ public class Event implements Parcelable {
     public Integer type;
     public String info;
     public String id;
+    public String imageUrl;
 
     public Event() {
     }

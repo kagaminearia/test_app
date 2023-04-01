@@ -9,8 +9,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:text="Add New Event"
             android:textColor="@color/blue_0"
             android:textAlignment="center"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="330dp"
+        android:layout_marginBottom="200dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp">
 
@@ -60,11 +60,20 @@
             android:inputType="text" />
 
         <Button
-            android:id="@+id/submitButton"
-            android:layout_width="match_parent"
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:text="Add Image"
+            android:onClick="takePicture"/>
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="Submit" />
 
     <Button
         android:id="@+id/deleteButton"

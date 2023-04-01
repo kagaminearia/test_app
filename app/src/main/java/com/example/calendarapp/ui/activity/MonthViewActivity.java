@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -128,5 +129,6 @@ public class MonthViewActivity extends AppCompatActivity implements CalendarAdap
 
         setMonthView();
     }
+
 
 }

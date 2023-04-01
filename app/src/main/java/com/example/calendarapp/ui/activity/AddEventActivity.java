@@ -5,26 +5,32 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.calendarapp.Event;
 import com.example.calendarapp.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class AddEventActivity extends AppCompatActivity {
     private String eventId;
@@ -33,6 +39,7 @@ public class AddEventActivity extends AppCompatActivity {
     private EditText dateEditText;
     private Button dateButton;
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,36 +59,30 @@ public class AddEventActivity extends AppCompatActivity {
         Button backButton = findViewById(R.id.backButton);
         Button deleteButton = findViewById(R.id.deleteButton);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("events");
+        Button imageButton = findViewById(R.id.imageButton);
+        imageButton.setOnClickListener(v -> takePicture());
 
         dateButton = findViewById(R.id.dateButton);
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
+        dateButton.setOnClickListener(v -> showDatePickerDialog());
 
         if (eventId != null) {
             Log.d(TAG, "Event id is " + eventId);
             // Retrieve the event from Firebase
-            ref.child(eventId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        Event event = task.getResult().getValue(Event.class);
-                        if (event.eventDate == null) {
-                            // Set a default value for the date
-                            event.eventDate = new Date();
-                        }
-                        // Set the EditText views
-                        nameEditText.setText(event.name);
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        String formattedDate = dateFormat.format(event.eventDate);
-                        dateEditText.setText(formattedDate);
-                        infoEditText.setText(event.info);
-                    } else {
-                        Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
+            ref.child(eventId).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Event event = task.getResult().getValue(Event.class);
+                    if (event.eventDate == null) {
+                        // Set a default value for the date
+                        event.eventDate = new Date();
                     }
+                    // Set the EditText views
+                    nameEditText.setText(event.name);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    String formattedDate = dateFormat.format(event.eventDate);
+                    dateEditText.setText(formattedDate);
+                    infoEditText.setText(event.info);
+                } else {
+                    Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -89,69 +90,57 @@ public class AddEventActivity extends AppCompatActivity {
         }
 
         // Set an event listener on the Submit button
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Retrieve the user input
-                String eventName = nameEditText.getText().toString();
-                String eventInfo = infoEditText.getText().toString();
-                String eventDateStr = dateEditText.getText().toString(); // retrieve date input
-                Date eventDate = null;
-                try {
-                    eventDate = new SimpleDateFormat("yyyy/MM/dd").parse(eventDateStr);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                // Set the event fields (add other fields later)
-                event.name = eventName;
-                event.info = eventInfo;
-                event.eventDate = eventDate; // set date field
+        submitButton.setOnClickListener(v -> {
+            // Retrieve the user input
+            String eventName = nameEditText.getText().toString();
+            String eventInfo = infoEditText.getText().toString();
+            String eventDateStr = dateEditText.getText().toString(); // retrieve date input
+            Date eventDate = null;
+            try {
+                eventDate = new SimpleDateFormat("yyyy/MM/dd").parse(eventDateStr);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            // Set the event fields (add other fields later)
+            event.name = eventName;
+            event.info = eventInfo;
+            event.eventDate = eventDate; // set date field
 
-                // Update the event if we know the id
-                if (eventId != null) {
-                    ref.child(eventId).setValue(event);
+            // Update the event if we know the id
+            if (eventId != null) {
+                ref.child(eventId).setValue(event);
+            } else {
+                // Save the event to the db with unique key (for current usage, may changed later)
+                ref.push().setValue(event);
+            }
+
+            // Clear the EditText views
+            nameEditText.setText("");
+            infoEditText.setText("");
+            dateEditText.setText(""); // clear date field
+
+            // Notify the user that the event was saved
+            backButton.performClick();
+            Toast.makeText(AddEventActivity.this, "Event saved", Toast.LENGTH_SHORT).show();
+        });
+
+        backButton.setOnClickListener(v -> {
+            // Launch the EventViewActivity
+            Intent intent = new Intent(AddEventActivity.this, EventViewActivity.class);
+            startActivity(intent);
+        });
+
+        deleteButton.setOnClickListener(view -> {
+            // We should add confirmation window?
+            ref.child(eventId).removeValue().addOnCompleteListener(task -> {
+                // Redirect to event list page
+                if (task.isSuccessful()) {
+                    backButton.performClick();
+                    Toast.makeText(AddEventActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Save the event to the db with unique key (for current usage, may changed later)
-                    ref.push().setValue(event);
+                    Toast.makeText(AddEventActivity.this, "Error deleting event", Toast.LENGTH_SHORT).show();
                 }
-
-                // Clear the EditText views
-                nameEditText.setText("");
-                infoEditText.setText("");
-                dateEditText.setText(""); // clear date field
-
-                // Notify the user that the event was saved
-                backButton.performClick();
-                Toast.makeText(AddEventActivity.this, "Event saved", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Launch the EventViewActivity
-                Intent intent = new Intent(AddEventActivity.this, EventViewActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // We should add confirmation window?
-                ref.child(eventId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Redirect to event list page
-                        if (task.isSuccessful()) {
-                            backButton.performClick();
-                            Toast.makeText(AddEventActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(AddEventActivity.this, "Error deleting event", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
+            });
         });
     }
 
@@ -159,13 +148,10 @@ public class AddEventActivity extends AppCompatActivity {
         // Create a new instance of DatePickerDialog and show it
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        // Set the selected date to the dateEditText
-                        String date = String.format("%d/%02d/%02d", year, monthOfYear + 1, dayOfMonth);
-                        dateEditText.setText(date);
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    // Set the selected date to the dateEditText
+                    String date = String.format("%d/%02d/%02d", year, monthOfYear + 1, dayOfMonth);
+                    dateEditText.setText(date);
                 },
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -173,4 +159,49 @@ public class AddEventActivity extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
+
+    private void takePicture() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // Save the image to db
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            String filename = UUID.randomUUID().toString() + ".jpg";
+            StorageReference imageRef = storageRef.child("images/" + filename);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] dataBytes = baos.toByteArray();
+
+            UploadTask uploadTask = imageRef.putBytes(dataBytes);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                // Get the image URL and save to the event
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageUrl = uri.toString();
+                        event.imageUrl = imageUrl;
+                    }
+                });
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Error uploading image", e);
+                    Toast.makeText(AddEventActivity.this, "Error uploading image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 }
