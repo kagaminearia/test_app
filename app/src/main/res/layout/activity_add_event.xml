@@ -66,6 +66,13 @@
             android:text="Add Image"
             android:onClick="takePicture"/>
 
+        <ImageView
+            android:id="@+id/eventImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/event_image" />
+
     </LinearLayout>
 
     <Button

@@ -1,10 +1,16 @@
 package com.example.calendarapp.ui.activity;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +19,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.calendarapp.Event;
 import com.example.calendarapp.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +48,9 @@ public class AddEventActivity extends AppCompatActivity {
     private Button dateButton;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private ActivityResultLauncher<Intent> imageCaptureLauncher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,13 @@ public class AddEventActivity extends AppCompatActivity {
         eventId = getIntent().getStringExtra("event_id");
         event = new Event();
         initWidgets();
+        imageCaptureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        // Your existing onActivityResult() code (without checking requestCode and resultCode)
+                    }
+                });
     }
 
 
@@ -81,6 +99,13 @@ public class AddEventActivity extends AppCompatActivity {
                     String formattedDate = dateFormat.format(event.eventDate);
                     dateEditText.setText(formattedDate);
                     infoEditText.setText(event.info);
+
+                    if (event.imageUrl != null) {
+                        ImageView eventImageView = findViewById(R.id.eventImageView);
+                        Glide.with(AddEventActivity.this)
+                                .load(event.imageUrl)
+                                .into(eventImageView);
+                    }
                 } else {
                     Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
                 }
@@ -160,11 +185,28 @@ public class AddEventActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void takePicture() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePicture();
+            } else {
+                Toast.makeText(this, "Camera permission is required to take pictures", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private void takePicture() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        } else {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                imageCaptureLauncher.launch(cameraIntent);
+            }
+        }
+
     }
 
     @Override
@@ -192,6 +234,11 @@ public class AddEventActivity extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         String imageUrl = uri.toString();
                         event.imageUrl = imageUrl;
+                        // Update the ImageView with the image
+                        ImageView eventImageView = findViewById(R.id.eventImageView);
+                        Glide.with(AddEventActivity.this)
+                                .load(imageUrl)
+                                .into(eventImageView);
                     }
                 });
             }).addOnFailureListener(new OnFailureListener() {
@@ -203,5 +250,6 @@ public class AddEventActivity extends AppCompatActivity {
             });
         }
     }
+
 
 }
