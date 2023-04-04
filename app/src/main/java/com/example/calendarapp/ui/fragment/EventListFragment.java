@@ -17,6 +17,7 @@ import com.example.calendarapp.Event;
 import com.example.calendarapp.R;
 import com.example.calendarapp.ui.activity.AddEventActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -108,8 +109,10 @@ public class EventListFragment extends Fragment {
             public void bind(Event e) {
                 event = e;
                 eventNameTextView.setText(event.name);
-                if (event.date != null) {
-                    eventDateTextView.setText(event.date.toString());
+                if (event.eventDate != null) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    String date = dateFormat.format(event.eventDate);
+                    eventDateTextView.setText(date);
                 } else {
                     eventDateTextView.setText("No date available");
                 }
