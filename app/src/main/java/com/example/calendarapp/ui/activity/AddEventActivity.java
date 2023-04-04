@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -59,13 +60,8 @@ public class AddEventActivity extends AppCompatActivity {
         eventId = getIntent().getStringExtra("event_id");
         event = new Event();
         initWidgets();
-        imageCaptureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        // Your existing onActivityResult() code (without checking requestCode and resultCode)
-                    }
-                });
+        setupImageCaptureLauncher();
+
     }
 
 
@@ -85,7 +81,7 @@ public class AddEventActivity extends AppCompatActivity {
 
         if (eventId != null) {
             Log.d(TAG, "Event id is " + eventId);
-            // Retrieve the event from Firebase
+            // Retrieve the event from db
             ref.child(eventId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Event event = task.getResult().getValue(Event.class);
@@ -156,9 +152,9 @@ public class AddEventActivity extends AppCompatActivity {
         });
 
         deleteButton.setOnClickListener(view -> {
-            // We should add confirmation window?
+            // Add a confirmation window?
             ref.child(eventId).removeValue().addOnCompleteListener(task -> {
-                // Redirect to event list page
+                // Return to event list page
                 if (task.isSuccessful()) {
                     backButton.performClick();
                     Toast.makeText(AddEventActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
@@ -169,8 +165,52 @@ public class AddEventActivity extends AppCompatActivity {
         });
     }
 
+    private void setupImageCaptureLauncher() {
+        imageCaptureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getExtras() != null) {
+                            Bundle extras = data.getExtras();
+                            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+                            // Save the image to db
+                            FirebaseStorage storage = FirebaseStorage.getInstance();
+                            StorageReference storageRef = storage.getReference();
+                            String filename = UUID.randomUUID().toString() + ".jpg";
+                            StorageReference imageRef = storageRef.child("images/" + filename);
+
+                            ByteArrayOutputStream bArrOut = new ByteArrayOutputStream();
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bArrOut);
+                            byte[] dataBytes = bArrOut.toByteArray();
+
+                            UploadTask uploadTask = imageRef.putBytes(dataBytes);
+                            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                                // Get the image URL and save to the event
+                                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String imageUrl = uri.toString();
+                                    event.imageUrl = imageUrl;
+                                    // Update the ImageView with the image
+                                    ImageView eventImageView = findViewById(R.id.eventImageView);
+                                    Glide.with(AddEventActivity.this)
+                                            .load(imageUrl)
+                                            .into(eventImageView);
+                                });
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Error uploading image", e);
+                                if (e instanceof StorageException) {
+                                    StorageException storageException = (StorageException) e;
+                                    int errorCode = storageException.getErrorCode();
+                                    Log.e(TAG, "Storage error code: " + errorCode);
+                                }
+                                Toast.makeText(AddEventActivity.this, "Error uploading image", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                });
+    }
+
     private void showDatePickerDialog() {
-        // Create a new instance of DatePickerDialog and show it
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, year, monthOfYear, dayOfMonth) -> {
@@ -185,6 +225,7 @@ public class AddEventActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    // Ask for camera permission
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
@@ -197,7 +238,6 @@ public class AddEventActivity extends AppCompatActivity {
     }
 
     private void takePicture() {
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         } else {
@@ -208,48 +248,5 @@ public class AddEventActivity extends AppCompatActivity {
         }
 
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // Save the image to db
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReference();
-            String filename = UUID.randomUUID().toString() + ".jpg";
-            StorageReference imageRef = storageRef.child("images/" + filename);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] dataBytes = baos.toByteArray();
-
-            UploadTask uploadTask = imageRef.putBytes(dataBytes);
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                // Get the image URL and save to the event
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        String imageUrl = uri.toString();
-                        event.imageUrl = imageUrl;
-                        // Update the ImageView with the image
-                        ImageView eventImageView = findViewById(R.id.eventImageView);
-                        Glide.with(AddEventActivity.this)
-                                .load(imageUrl)
-                                .into(eventImageView);
-                    }
-                });
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Error uploading image", e);
-                    Toast.makeText(AddEventActivity.this, "Error uploading image", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
 
 }
