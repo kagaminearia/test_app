@@ -53,6 +53,7 @@ public class AddEventActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> imageCaptureLauncher;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,15 +175,15 @@ public class AddEventActivity extends AppCompatActivity {
                             Bundle extras = data.getExtras();
                             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
+                            ByteArrayOutputStream bArrOut = new ByteArrayOutputStream();
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, bArrOut);
+                            byte[] dataBytes = bArrOut.toByteArray();
+
                             // Save the image to db
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
                             String filename = UUID.randomUUID().toString() + ".jpg";
                             StorageReference imageRef = storageRef.child("images/" + filename);
-
-                            ByteArrayOutputStream bArrOut = new ByteArrayOutputStream();
-                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bArrOut);
-                            byte[] dataBytes = bArrOut.toByteArray();
 
                             UploadTask uploadTask = imageRef.putBytes(dataBytes);
                             uploadTask.addOnSuccessListener(taskSnapshot -> {

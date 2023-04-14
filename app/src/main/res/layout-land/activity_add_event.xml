@@ -9,8 +9,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="7dp"
             android:text="Add New Event"
             android:textColor="@color/blue_0"
             android:textAlignment="center"
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter event name"
-            android:textSize="10dp"
+            android:textSize="18dp"
             android:inputType="text" />
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,12 +41,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter date (yyyy/MM/dd)"
-            android:textSize="10dp"
+            android:textSize="18dp"
             android:inputType="date" />
             <Button
                 android:id="@+id/dateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textSize="18dp"
                 android:text="Select" />
         </LinearLayout>
 
@@ -56,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter information"
-            android:textSize="10dp"
+            android:textSize="18dp"
             android:inputType="text" />
 
         <Button
@@ -64,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add Image"
+            android:textSize="18dp"
             android:onClick="takePicture"/>
 
         <ImageView
@@ -89,7 +91,7 @@
                 android:id="@+id/submitButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:textSize="15dp"
                 android:text="Submit" />
         </LinearLayout>
 
@@ -101,9 +103,8 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
                 android:textColor="@color/red"
-                android:textSize="10dp"
+                android:textSize="15dp"
                 android:text="Delete Event" />
         </LinearLayout>
 
@@ -115,15 +116,10 @@
                 android:id="@+id/backButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/blue_0"
-                android:textSize="10dp"
+                android:textColor="@color/blue_1"
+                android:textSize="15dp"
                 android:text="Back to the Events" />
         </LinearLayout>
-
-
-
-
-
 
 
     </LinearLayout>
