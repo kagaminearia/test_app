@@ -53,7 +53,8 @@ public class AddEventActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 2;
     private ActivityResultLauncher<Intent> imageCaptureLauncher;
 
-
+    private int thumbnailWidth = 300;
+    private int thumbnailHeight = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,32 +103,25 @@ public class AddEventActivity extends AppCompatActivity {
                         ImageView eventImageView = findViewById(R.id.eventImageView);
                         Glide.with(AddEventActivity.this)
                                 .load(event.imageUrl)
+                                .override(thumbnailWidth, thumbnailHeight)
                                 .into(eventImageView);
 
                         // Set the eventImageView
-                        eventImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialog dialog = new Dialog(AddEventActivity.this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
-                                dialog.setContentView(R.layout.fullscreen_image_dialog);
+                        eventImageView.setOnClickListener(v -> {
+                            Dialog dialog = new Dialog(AddEventActivity.this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+                            dialog.setContentView(R.layout.fullscreen_image_dialog);
 
-                                ImageView fullSizeImageView = dialog.findViewById(R.id.fullSizeImageView);
+                            ImageView fullSizeImageView = dialog.findViewById(R.id.fullSizeImageView);
 
-                                // Load full image using Glide
-                                Glide.with(AddEventActivity.this)
-                                        .load(event.imageUrl)
-                                        .into(fullSizeImageView);
+                            // Load full image using Glide
+                            Glide.with(AddEventActivity.this)
+                                    .load(event.imageUrl)
+                                    .into(fullSizeImageView);
 
-                                // Exit full-sized image
-                                fullSizeImageView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialog.dismiss();
-                                    }
-                                });
+                            // Exit full-sized image
+                            fullSizeImageView.setOnClickListener(v1 -> dialog.dismiss());
 
-                                dialog.show();
-                            }
+                            dialog.show();
                         });
                     }
                 } else {
@@ -211,8 +205,6 @@ public class AddEventActivity extends AppCompatActivity {
                             byte[] dataBytes = bArrOut.toByteArray();
 
                             // Create a thumbnail of the image and set it to the eventImageView
-                            int thumbnailWidth = 70;
-                            int thumbnailHeight = 70;
                             Bitmap thumbnail = getThumbnail(imageBitmap, thumbnailWidth, thumbnailHeight);
                             ImageView eventImageView = findViewById(R.id.eventImageView);
                             eventImageView.setImageBitmap(thumbnail);
