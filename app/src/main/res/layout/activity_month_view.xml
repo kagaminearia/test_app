@@ -17,6 +17,7 @@
         android:layout_marginTop="20dp">
 
         <Button
+            android:id="@+id/prevMonthButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,6 +39,7 @@
             android:textColor="@color/black"/>
 
         <Button
+            android:id="@+id/nextMonthButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -60,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="SUN"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -69,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="MON"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -78,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="TUE"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -87,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="WED"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -96,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="THU"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -105,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="FRI"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -114,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="SAT"
-            android:textColor="@color/gray_0"
+            android:textColor="@color/gray_1"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -122,10 +124,10 @@
     </LinearLayout>
 
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/calendarRecyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+    <!--        android:id="@+id/calendarRecyclerView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"/>-->
 
     <FrameLayout
         android:id="@+id/month_fragment_container"
@@ -164,3 +166,4 @@
     </LinearLayout>
 
 </LinearLayout>
+

@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -51,6 +52,7 @@ public class AddEventActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 2;
     private ActivityResultLauncher<Intent> imageCaptureLauncher;
+
 
 
     @Override
@@ -101,6 +103,32 @@ public class AddEventActivity extends AppCompatActivity {
                         Glide.with(AddEventActivity.this)
                                 .load(event.imageUrl)
                                 .into(eventImageView);
+
+                        // Set the eventImageView
+                        eventImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Dialog dialog = new Dialog(AddEventActivity.this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+                                dialog.setContentView(R.layout.fullscreen_image_dialog);
+
+                                ImageView fullSizeImageView = dialog.findViewById(R.id.fullSizeImageView);
+
+                                // Load full image using Glide
+                                Glide.with(AddEventActivity.this)
+                                        .load(event.imageUrl)
+                                        .into(fullSizeImageView);
+
+                                // Exit full-sized image
+                                fullSizeImageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                dialog.show();
+                            }
+                        });
                     }
                 } else {
                     Toast.makeText(AddEventActivity.this, "Error retrieving event", Toast.LENGTH_SHORT).show();
@@ -165,6 +193,10 @@ public class AddEventActivity extends AppCompatActivity {
         });
     }
 
+    public static Bitmap getThumbnail(Bitmap bitmap, int width, int height) {
+        return Bitmap.createScaledBitmap(bitmap, width, height, false);
+    }
+
     private void setupImageCaptureLauncher() {
         imageCaptureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -174,15 +206,22 @@ public class AddEventActivity extends AppCompatActivity {
                             Bundle extras = data.getExtras();
                             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
+                            ByteArrayOutputStream bArrOut = new ByteArrayOutputStream();
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 80, bArrOut);
+                            byte[] dataBytes = bArrOut.toByteArray();
+
+                            // Create a thumbnail of the image and set it to the eventImageView
+                            int thumbnailWidth = 70;
+                            int thumbnailHeight = 70;
+                            Bitmap thumbnail = getThumbnail(imageBitmap, thumbnailWidth, thumbnailHeight);
+                            ImageView eventImageView = findViewById(R.id.eventImageView);
+                            eventImageView.setImageBitmap(thumbnail);
+
                             // Save the image to db
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
                             String filename = UUID.randomUUID().toString() + ".jpg";
                             StorageReference imageRef = storageRef.child("images/" + filename);
-
-                            ByteArrayOutputStream bArrOut = new ByteArrayOutputStream();
-                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bArrOut);
-                            byte[] dataBytes = bArrOut.toByteArray();
 
                             UploadTask uploadTask = imageRef.putBytes(dataBytes);
                             uploadTask.addOnSuccessListener(taskSnapshot -> {
@@ -190,11 +229,6 @@ public class AddEventActivity extends AppCompatActivity {
                                 imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                     String imageUrl = uri.toString();
                                     event.imageUrl = imageUrl;
-                                    // Update the ImageView with the image
-                                    ImageView eventImageView = findViewById(R.id.eventImageView);
-                                    Glide.with(AddEventActivity.this)
-                                            .load(imageUrl)
-                                            .into(eventImageView);
                                 });
                             }).addOnFailureListener(e -> {
                                 Log.e(TAG, "Error uploading image", e);
