@@ -1,9 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.activity.AddEventActivity">
 
         <TextView
@@ -16,76 +15,91 @@
             android:textAlignment="center"
             android:textSize="40dp"></TextView>
 
-    <LinearLayout
-        android:id="@+id/eventLayout"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="200dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp">
+        android:layout_height="200dp"
+        android:layout_above="@+id/submitButton"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="40dp"
+        android:fillViewport="true">
 
-        <EditText
-            android:id="@+id/nameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter event name"
-            android:textSize="20dp"
-            android:inputType="text" />
         <LinearLayout
+            android:id="@+id/eventLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="200dp"
+            android:orientation="vertical">
+
             <EditText
-            android:id="@+id/dateEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Enter date (yyyy/MM/dd)"
-            android:textSize="20dp"
-            android:inputType="date" />
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter event name"
+                android:inputType="text"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/dateEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter date (yyyy/MM/dd)"
+                    android:inputType="date"
+                    android:textSize="20dp" />
+
+                <Button
+                    android:id="@+id/dateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Select" />
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/infoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter information"
+                android:inputType="text"
+                android:textSize="20dp" />
+
             <Button
-                android:id="@+id/dateButton"
+                android:id="@+id/imageButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Select" />
+                android:layout_height="wrap_content"
+                android:onClick="takePicture"
+                android:text="Add Image" />
+
+            <ImageView
+                android:id="@+id/eventImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/event_image" />
+
         </LinearLayout>
-
-
-        <EditText
-            android:id="@+id/infoEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter information"
-            android:textSize="20dp"
-            android:inputType="text" />
-
-        <Button
-            android:id="@+id/imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Image"
-            android:onClick="takePicture"/>
-
-        <ImageView
-            android:id="@+id/eventImageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/event_image" />
-
-    </LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_above="@+id/deleteButton"
         android:text="Submit" />
 
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/backButton"
         android:background="@android:color/transparent"
         android:textColor="@color/red"
         android:textSize="20dp"
@@ -95,9 +109,10 @@
         android:id="@+id/backButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
         android:textColor="@color/blue_0"
         android:textSize="20dp"
         android:text="Back to the Events" />
 
-    </LinearLayout>
+</RelativeLayout>
